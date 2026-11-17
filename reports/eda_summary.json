@@ -1,0 +1,21 @@
+{
+  "total_training_records": 10228,
+  "period": "2015 to 2021",
+  "cities": [
+    "Chennai",
+    "Kolkata",
+    "Mumbai",
+    "New Delhi"
+  ],
+  "temperature_mean_c": 26.29,
+  "temperature_max_c": 44.2,
+  "temperature_min_c": 1.9,
+  "annual_avg_precip_mm": 1500.0,
+  "max_single_day_rain_mm": 251.1,
+  "max_wind_gust_kmh": 142.9,
+  "risk_class_proportions": {
+    "0": 0.353,
+    "1": 0.348,
+    "2": 0.299
+  }
+}

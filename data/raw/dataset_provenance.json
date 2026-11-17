@@ -1,0 +1,30 @@
+{
+  "dataset_name": "Indian Historical Multi-Zone Climate Dataset",
+  "source": "Open-Meteo Historical Weather API (ERA5 Reanalysis & IMD/WMO ground stations)",
+  "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "citation": "Open-Meteo.com, Copernicus Climate Change Service (ERA5)",
+  "start_date": "2015-01-01",
+  "end_date": "2023-12-31",
+  "total_records": 13148,
+  "cities": [
+    "New Delhi",
+    "Mumbai",
+    "Kolkata",
+    "Chennai"
+  ],
+  "variables": [
+    "temperature_2m_max",
+    "temperature_2m_min",
+    "temperature_2m_mean",
+    "apparent_temperature_max",
+    "apparent_temperature_min",
+    "precipitation_sum",
+    "rain_sum",
+    "windspeed_10m_max",
+    "windgusts_10m_max",
+    "surface_pressure_mean",
+    "relative_humidity_2m_mean",
+    "shortwave_radiation_sum",
+    "et0_fao_evapotranspiration"
+  ]
+}

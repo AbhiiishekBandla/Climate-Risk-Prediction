@@ -1,0 +1,6 @@
+accuracy,precision_macro,recall_macro,f1_macro,f1_weighted,roc_auc_macro_ovr,model_name
+0.999,0.999,0.999,0.999,0.999,0.9998,Gradient_Boosting
+0.999,0.999,0.999,0.999,0.999,0.9992,Decision_Tree
+0.9945,0.9945,0.9945,0.9945,0.9945,0.9999,Random_Forest
+0.9925,0.9925,0.9923,0.9924,0.9925,0.9999,XGBoost
+0.8839,0.8834,0.8843,0.8835,0.8834,0.974,Logistic_Regression
