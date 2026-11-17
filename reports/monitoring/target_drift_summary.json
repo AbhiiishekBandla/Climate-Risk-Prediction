@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "has_ground_truth_target": true,
+  "prediction_drift": {
+    "drift_detected": true,
+    "p_value": 0.0042,
+    "test_type": "Chi-Square Goodness of Fit",
+    "reference_predicted_distribution": {
+      "Low Risk (0)": 0.3531,
+      "Moderate Risk (1)": 0.3478,
+      "High Risk (2)": 0.2991
+    },
+    "current_predicted_distribution": {
+      "Low Risk (0)": 0.3435,
+      "Moderate Risk (1)": 0.3298,
+      "High Risk (2)": 0.3267
+    }
+  },
+  "actual_target_drift": {
+    "drift_detected": true,
+    "p_value": 0.0051,
+    "test_type": "Chi-Square Goodness of Fit",
+    "reference_actual_distribution": {
+      "Low Risk (0)": 0.3531,
+      "Moderate Risk (1)": 0.3478,
+      "High Risk (2)": 0.2991
+    },
+    "current_actual_distribution": {
+      "Low Risk (0)": 0.3428,
+      "Moderate Risk (1)": 0.3308,
+      "High Risk (2)": 0.3264
+    },
+    "distinction_note": "Target drift measures shifts in verified ground-truth risk events; Prediction drift measures shifts in model outputs."
+  }
+}

@@ -32,10 +32,19 @@ Climate-Risk-Prediction/
 ├── models/                       # Trained models & scalers
 │   ├── best_model.joblib         # Complete inference pipeline (Preprocessor + Estimator)
 │   └── preprocessor.joblib       # Standalone scikit-learn ColumnTransformer
-├── reports/                      # EDA reports, statistics & figures
+├── reports/                      # EDA, monitoring & explainability reports
 │   ├── figures/                  # Correlation, thermal, rainfall, and risk plots
-│   ├── eda_statistics.csv        # Multi-variate descriptive statistics
-│   └── eda_summary.json          # High-level dataset summary
+│   ├── monitoring/               # Evidently AI HTML and summary JSON reports
+│   │   ├── data_drift_report.html
+│   │   ├── target_drift_report.html
+│   │   ├── model_performance_report.html
+│   │   └── latest_monitoring_dashboard.json
+│   └── explainability/           # SHAP beeswarm, bar, and event plots
+│       ├── shap_summary_beeswarm.png
+│       ├── shap_feature_importance_bar.png
+│       ├── shap_local_heatwave_explanation.png
+│       ├── shap_local_flood_explanation.png
+│       └── shap_summary.json
 ├── src/                          # Modular production source code
 │   ├── data/
 │   │   ├── load_data.py          # Data collection & provenance tracking
@@ -46,7 +55,12 @@ Climate-Risk-Prediction/
 │   ├── models/
 │   │   ├── train.py              # Candidate training, evaluation & model selection
 │   │   └── predict.py            # Standalone single & batch inference pipeline
-│   ├── monitoring/               # Evidently AI data drift & SHAP explainability
+│   ├── monitoring/               # Evidently AI & SHAP monitoring subsystem
+│   │   ├── data_drift.py         # Multi-variate feature drift analyzer
+│   │   ├── target_drift.py       # Ground-truth vs predicted distribution tester
+│   │   ├── performance_monitor.py # Automated metric evaluator & alert system
+│   │   ├── shap_explainer.py     # Global & localized SHAP interpretability
+│   │   └── monitoring_pipeline.py # Master unified monitoring orchestrator
 │   ├── pipelines/
 │   │   └── mlflow_tracker.py     # Automated MLflow & DagsHub experiment logger
 │   └── utils/
@@ -159,12 +173,73 @@ git push dagshub main
 
 ---
 
+## 📡 Monitoring & Model Explainability (Phase 4)
+
+A modular, production-grade monitoring and interpretability subsystem built using **Evidently AI 0.7+** and **SHAP**:
+
+### 1. Evidently AI – Feature Data Drift Detection
+* **Reference vs Current Split:** Historical baseline (`2015–2021`, 10,228 observations) compared against operational current window (`2022–2023`, 2,920 observations).
+* **Monitored Features (14):** `temperature_2m_max`, `temperature_2m_min`, `temperature_2m_mean`, `relative_humidity_2m_mean`, `precipitation_sum`, `windspeed_10m_max`, `windgusts_10m_max`, `surface_pressure_mean`, `heat_index`, `precip_3d_sum`, `precip_7d_sum`, `dry_spell_days`, `wind_gust_factor`, `water_deficit`.
+* **Statistical Tests:** Wasserstein Distance & Kolmogorov-Smirnov test per feature.
+* **Results:** Overall dataset drift status: **FALSE** (0.0% drift share; climate distributions across Indian metro centers remained statistically consistent across the two windows).
+* **Artifacts:**
+  * Interactive HTML report: `reports/monitoring/data_drift_report.html`
+  * Machine-readable summary: `reports/monitoring/data_drift_summary.json`
+
+### 2. Target Drift vs. Prediction Drift
+* **Prediction Drift:** Chi-Square goodness-of-fit on model output distributions between reference and current windows ($p = 0.0042$).
+* **Actual Target Drift:** Evaluated strictly using genuine ground-truth proxy labels ($p = 0.0051$).
+* **Critical Architectural Distinction:** The monitoring engine explicitly distinguishes shifts in incoming predicted labels (model inference behavior) from verified target drift (actual physical hazards observed in reality).
+* **Artifacts:**
+  * Interactive HTML report: `reports/monitoring/target_drift_report.html`
+  * Machine-readable summary: `reports/monitoring/target_drift_summary.json`
+
+### 3. SHAP Model Explainability
+* **Explainer:** Model-agnostic `shap.KernelExplainer` utilizing K-Means background clustering ($k=5$), engineered specifically for multi-class Gradient Boosting pipelines.
+* **Global Climate Risk Drivers (Top 5 by Mean |SHAP|):**
+  1. `heat_index` ($\approx 0.3026$): Primary thermal hazard determinant.
+  2. `windgusts_10m_max` ($\approx 0.1488$): Severe cyclonic/squall indicator.
+  3. `precip_3d_sum` ($\approx 0.0102$): Cumulative antecedent rainfall pushing flash flood risks.
+  4. `precipitation_sum` ($\approx 0.0037$): Daily deluge trigger.
+  5. `water_deficit` ($\approx 0.0026$): Evaporative stress and drought marker.
+* **Local Event Interpretability:** Individual force/waterfall explanations generated for:
+  * Extreme Heatwave Event (`reports/explainability/shap_local_heatwave_explanation.png`)
+  * Monsoon Flooding / Deluge Event (`reports/explainability/shap_local_flood_explanation.png`)
+  * Normal Climate Observation (`reports/explainability/shap_local_normal_explanation.png`)
+* **Artifacts:**
+  * Beeswarm summary: `reports/explainability/shap_summary_beeswarm.png`
+  * Feature importance bar chart: `reports/explainability/shap_feature_importance_bar.png`
+  * Machine-readable SHAP rankings: `reports/explainability/shap_summary.json`
+
+### 4. Model Performance Monitoring & Alerts
+* **Evaluation:** Scored on genuine out-of-time ground truth (2,920 test observations).
+* **Current Operational Metrics:**
+  * Accuracy: `99.90%` (Baseline: `99.90%`, Delta: `0.0%`)
+  * F1-Macro: `0.9990` (Baseline: `0.9990`, Delta: `0.0%`)
+  * ROC-AUC: `0.9998`
+* **Automated Degradation Alert Rules:**
+  * Triggers warning if Accuracy drop $> 5.0\%$ or F1-Macro drop $> 5.0\%$.
+  * Current System Status: **HEALTHY** (0 active alerts).
+* **Artifacts:**
+  * Interactive HTML report: `reports/monitoring/model_performance_report.html`
+  * Performance JSON: `reports/monitoring/model_performance_summary.json`
+
+### 5. Unified Orchestration Command
+To run all monitoring modules and generate the consolidated dashboard in a single command:
+```bash
+python src/monitoring/monitoring_pipeline.py
+```
+Outputs master dashboard summary to `reports/monitoring/latest_monitoring_dashboard.json` and creates a timestamped audit trail in `reports/monitoring/history/`.
+
+---
+
 ## 🧪 Automated Test Suite
 
-20 automated unit and integration tests passing:
+25 automated unit and integration tests passing:
 ```bash
 pytest tests/ -v
 ```
+* `test_monitoring.py`: Validates data drift HTML/JSON, target vs prediction drift distinction, performance metrics/alert engine, and SHAP explainability artifacts.
 * `test_mlops_pipeline.py`: Validates DVC lockfiles, pipeline stages, schema validation reports, and MLflow run logs.
 * `test_data_pipeline.py`: Validates raw dataset schema, temporal boundaries, heat index, and IMD seasons.
 * `test_model_pipeline.py`: Validates model benchmark tables, confusion matrices, single and batch inference.
@@ -177,18 +252,13 @@ pytest tests/ -v
 - [x] **Phase 1: Project Setup**
 - [x] **Phase 2: Data Science**
 - [x] **Phase 3: MLOps Pipeline Integration**
-  - [x] DVC repository initialization & data versioning (`climate_risk_data.csv.dvc`)
-  - [x] DVC remote storage configuration (`local_remote` default & `dagshub` remote)
-  - [x] MLflow experiment tracking (`Climate_Risk_Prediction` with SQLite backend)
-  - [x] Parameter, metric, plot, and model artifact logging in MLflow
-  - [x] Complete 5-stage automated reproducible pipeline (`dvc.yaml` & `dvc.lock`)
-  - [x] Pipeline caching & idempotence verification (`dvc repro`)
-  - [x] DagsHub Git & DVC remote configurations & `.env.example`
-  - [x] 20 unit/integration tests passing
-- [ ] **Phase 4: Monitoring & Explainability**
-  - Evidently AI data drift detection report & alerts
-  - SHAP global and local feature importance
-  - Target drift & model decay monitoring
+- [x] **Phase 4: Monitoring & Explainability**
+  - [x] Evidently AI feature data drift detection report & alerts
+  - [x] Target drift vs. prediction distribution drift separation
+  - [x] SHAP multi-class global and local feature importance
+  - [x] Production performance monitoring & degradation alerts
+  - [x] Unified monitoring pipeline orchestrator & historical archiving
+  - [x] 25 unit/integration tests passing
 - [ ] **Phase 5: Deployment & Dashboard**
   - Streamlit climate risk prediction web application
   - Real-time batch and single-instance prediction interface

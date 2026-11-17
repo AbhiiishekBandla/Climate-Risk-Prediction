@@ -70,3 +70,6 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Monitoring Run History Snapshots
+reports/monitoring/history/

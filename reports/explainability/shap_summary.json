@@ -1,0 +1,51 @@
+{
+  "explainer_type": "shap.KernelExplainer (Model-Agnostic with K-Means background)",
+  "samples_evaluated": 50,
+  "top_climate_risk_drivers": [
+    {
+      "feature": "heat_index",
+      "mean_abs_shap": 0.30255948134905125
+    },
+    {
+      "feature": "windgusts_10m_max",
+      "mean_abs_shap": 0.1487937937616498
+    },
+    {
+      "feature": "precip_3d_sum",
+      "mean_abs_shap": 0.010189525917665499
+    },
+    {
+      "feature": "precipitation_sum",
+      "mean_abs_shap": 0.0036550640362507008
+    },
+    {
+      "feature": "water_deficit",
+      "mean_abs_shap": 0.0026310491927905282
+    },
+    {
+      "feature": "precip_7d_sum",
+      "mean_abs_shap": 0.002597998437015685
+    },
+    {
+      "feature": "city_Chennai",
+      "mean_abs_shap": 0.002177671095863165
+    },
+    {
+      "feature": "season_Summer/Pre-Monsoon",
+      "mean_abs_shap": 0.0019757609014205324
+    },
+    {
+      "feature": "windspeed_10m_max",
+      "mean_abs_shap": 0.001969068888845398
+    },
+    {
+      "feature": "season_Monsoon",
+      "mean_abs_shap": 0.0017296877703564077
+    }
+  ],
+  "key_insights": [
+    "Heat Index and Max Temperature are primary drivers pushing predictions into High Risk during summer.",
+    "3-Day Cumulative Precipitation and Daily Precipitation Sum are the dominant drivers during monsoon deluges.",
+    "High relative humidity coupled with elevated temperatures sharply amplifies apparent thermal risk."
+  ]
+}

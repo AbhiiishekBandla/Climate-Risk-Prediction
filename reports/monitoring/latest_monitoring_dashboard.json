@@ -1,0 +1,57 @@
+{
+  "pipeline_run_timestamp": "20261117_111539",
+  "overall_system_status": "HEALTHY",
+  "data_drift": {
+    "dataset_drift_detected": false,
+    "drift_share": 0.0,
+    "drifted_features": []
+  },
+  "target_drift": {
+    "prediction_drift_detected": true,
+    "actual_target_drift_detected": true
+  },
+  "performance": {
+    "status": "HEALTHY",
+    "current_f1_macro": 0.999,
+    "baseline_f1_macro": 0.999,
+    "alerts": []
+  },
+  "explainability": {
+    "top_drivers": [
+      {
+        "feature": "heat_index",
+        "mean_abs_shap": 0.30255948134905125
+      },
+      {
+        "feature": "windgusts_10m_max",
+        "mean_abs_shap": 0.1487937937616498
+      },
+      {
+        "feature": "precip_3d_sum",
+        "mean_abs_shap": 0.010189525917665499
+      },
+      {
+        "feature": "precipitation_sum",
+        "mean_abs_shap": 0.0036550640362507008
+      },
+      {
+        "feature": "water_deficit",
+        "mean_abs_shap": 0.0026310491927905282
+      }
+    ],
+    "insights": [
+      "Heat Index and Max Temperature are primary drivers pushing predictions into High Risk during summer.",
+      "3-Day Cumulative Precipitation and Daily Precipitation Sum are the dominant drivers during monsoon deluges.",
+      "High relative humidity coupled with elevated temperatures sharply amplifies apparent thermal risk."
+    ]
+  },
+  "generated_artifacts": [
+    "reports\\monitoring\\data_drift_report.html",
+    "reports\\monitoring\\target_drift_report.html",
+    "reports\\monitoring\\model_performance_report.html",
+    "reports\\explainability\\shap_summary_beeswarm.png",
+    "reports\\explainability\\shap_feature_importance_bar.png",
+    "reports\\explainability\\shap_local_heatwave_explanation.png",
+    "reports\\explainability\\shap_local_flood_explanation.png"
+  ]
+}
