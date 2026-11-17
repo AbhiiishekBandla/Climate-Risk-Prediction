@@ -1,0 +1,35 @@
+# Hyperparameters and Model Parameters
+
+base:
+  random_state: 42
+  test_size: 0.2
+  val_size: 0.1
+
+data_processing:
+  missing_strategy_numerical: "median"
+  missing_strategy_categorical: "most_frequent"
+  scaling_method: "standard"
+
+models:
+  random_forest:
+    n_estimators: 120
+    max_depth: 12
+    min_samples_split: 5
+    min_samples_leaf: 2
+    random_state: 42
+
+  gradient_boosting:
+    n_estimators: 100
+    learning_rate: 0.08
+    max_depth: 5
+    random_state: 42
+
+  logistic_regression:
+    C: 1.0
+    max_iter: 1000
+    random_state: 42
+
+mlflow:
+  experiment_name: "Climate_Risk_Prediction"
+  registered_model_name: "ClimateRiskClassifier"
+  tracking_uri: "mlruns" # default local, override with DagsHub URI

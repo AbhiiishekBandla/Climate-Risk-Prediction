@@ -1,0 +1,45 @@
+# Climate Risk Prediction System - Configuration
+
+project:
+  name: "Climate-Risk-Prediction"
+  version: "1.0.0"
+  description: "End-to-End MLOps System for Climate-Related Risk Assessment"
+
+paths:
+  raw_data_dir: "data/raw"
+  raw_data_path: "data/raw/climate_risk_data.csv"
+  processed_data_dir: "data/processed"
+  train_data_path: "data/processed/train.csv"
+  test_data_path: "data/processed/test.csv"
+  reference_data_path: "data/reference/reference_data.csv"
+  current_data_path: "data/current/current_data.csv"
+  models_dir: "models"
+  model_path: "models/best_model.joblib"
+  preprocessor_path: "models/preprocessor.joblib"
+  metrics_dir: "metrics"
+  metrics_path: "metrics/scores.json"
+  drift_report_dir: "metrics/drift_reports"
+  data_drift_report_path: "metrics/drift_reports/data_drift_report.html"
+  model_performance_report_path: "metrics/drift_reports/model_performance_report.html"
+  logs_dir: "logs"
+
+features:
+  numerical:
+    - "temperature_c"
+    - "humidity_pct"
+    - "wind_speed_kmh"
+    - "precipitation_mm"
+    - "atmospheric_pressure_hpa"
+    - "soil_moisture_pct"
+    - "vegetation_index"
+    - "drought_index"
+  categorical:
+    - "region"
+    - "season"
+    - "terrain_type"
+  target: "risk_level"  # Multi-class or binary: 0 (Low), 1 (Moderate), 2 (High), 3 (Severe)
+
+monitoring:
+  drift_confidence_level: 0.95
+  drift_share_threshold: 0.3
+  target_drift_threshold: 0.05

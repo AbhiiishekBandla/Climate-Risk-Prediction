@@ -1,0 +1,64 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Pytest / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MLflow local runs and artifacts
+mlruns/
+.mlflow/
+
+# DVC - Data and models are versioned with DVC, not Git
+/data/raw/*.csv
+/data/processed/*.csv
+/data/reference/*.csv
+/data/current/*.csv
+/models/*.joblib
+/models/*.pkl
+
+# Environment variables & secrets
+.env
+*.env
+credentials.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
