@@ -1,0 +1,143 @@
+schema: '2.0'
+stages:
+  data_validation:
+    cmd: python src/data/validate_data.py
+    deps:
+    - path: data/raw/climate_risk_data.csv
+      hash: md5
+      md5: c242bbcb99ff40bdd6f9eba4f5de7c4d
+      size: 1759134
+    - path: src/data/validate_data.py
+      hash: md5
+      md5: a175c2c681e375f619ead073760ff868
+      size: 2601
+    outs:
+    - path: data/raw/validation_status.json
+      hash: md5
+      md5: b30e0c308ecd712fae52b078e9590ff8
+      size: 544
+  feature_engineering:
+    cmd: python src/features/build_features.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: a960372e44fa96a81deb044f33f2a031
+      size: 1399
+    - path: data/raw/climate_risk_data.csv
+      hash: md5
+      md5: c242bbcb99ff40bdd6f9eba4f5de7c4d
+      size: 1759134
+    - path: src/features/build_features.py
+      hash: md5
+      md5: e9dfc504a90ba6d859994127145e8555
+      size: 8291
+    outs:
+    - path: data/current/current_data.csv
+      hash: md5
+      md5: 5ee5ae70ce3e7a68bf839b311a48cfca
+      size: 769348
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 5ee5ae70ce3e7a68bf839b311a48cfca
+      size: 769348
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 74b26c70b6d8f82dc496cbf817cd4e9e
+      size: 2659581
+    - path: data/reference/reference_data.csv
+      hash: md5
+      md5: 74b26c70b6d8f82dc496cbf817cd4e9e
+      size: 2659581
+  eda:
+    cmd: python src/features/eda.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 74b26c70b6d8f82dc496cbf817cd4e9e
+      size: 2659581
+    - path: src/features/eda.py
+      hash: md5
+      md5: 55b2a64bc99c2364cc59d51d79f21a77
+      size: 6602
+    outs:
+    - path: reports/eda_statistics.csv
+      hash: md5
+      md5: 3b63c578bbb472b162f3673108001f32
+      size: 793
+    - path: reports/eda_summary.json
+      hash: md5
+      md5: 3a6de1ef336aa956f6b5bb948e2a85ab
+      size: 433
+    - path: reports/figures
+      hash: md5
+      md5: 1e354b406448b2ef63fffbe8da6f77b2.dir
+      size: 1346166
+      nfiles: 5
+  model_training_and_evaluation:
+    cmd: python src/models/train.py
+    deps:
+    - path: config/params.yaml
+      hash: md5
+      md5: ada1b9de623e344e87f4fb985ab781bf
+      size: 720
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 5ee5ae70ce3e7a68bf839b311a48cfca
+      size: 769348
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 74b26c70b6d8f82dc496cbf817cd4e9e
+      size: 2659581
+    - path: src/models/train.py
+      hash: md5
+      md5: eb29c096ecd5cb16adfd615a415fc338
+      size: 9785
+    params:
+      config/params.yaml:
+        models.gradient_boosting:
+          n_estimators: 100
+          learning_rate: 0.08
+          max_depth: 5
+          random_state: 42
+        models.random_forest:
+          n_estimators: 120
+          max_depth: 12
+          min_samples_split: 5
+          min_samples_leaf: 2
+          random_state: 42
+    outs:
+    - path: metrics/confusion_matrix.png
+      hash: md5
+      md5: f589fd57248b9e786e210dfaed444e13
+      size: 62191
+    - path: metrics/model_comparison.csv
+      hash: md5
+      md5: 0395f1a3391c0f056403e71b96cf10e1
+      size: 367
+    - path: metrics/scores.json
+      hash: md5
+      md5: e1c527ad7cb25c96f9511e5347fec105
+      size: 2537
+    - path: models/best_model.joblib
+      hash: md5
+      md5: 66b5098166dfe747d1a4205676ce6f57
+      size: 872764
+    - path: models/preprocessor.joblib
+      hash: md5
+      md5: 244ad3629e1678ce05308b8553738d90
+      size: 5465
+  mlflow_tracking:
+    cmd: python src/pipelines/mlflow_tracker.py
+    deps:
+    - path: metrics/scores.json
+      hash: md5
+      md5: e1c527ad7cb25c96f9511e5347fec105
+      size: 2537
+    - path: models/best_model.joblib
+      hash: md5
+      md5: 66b5098166dfe747d1a4205676ce6f57
+      size: 872764
+    - path: src/pipelines/mlflow_tracker.py
+      hash: md5
+      md5: 769c976bce0c095d9b60966f6c7e21f3
+      size: 6143

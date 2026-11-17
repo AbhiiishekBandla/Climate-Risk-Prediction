@@ -2,3 +2,5 @@
     remote = local_remote
 ['remote "local_remote"']
     url = ../../dvc_remote_storage
+['remote "dagshub"']
+    url = https://dagshub.com/abhishekbandla07/Climate-Risk-Prediction.dvc

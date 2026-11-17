@@ -37,6 +37,14 @@ htmlcov/
 # MLflow local runs and artifacts
 mlruns/
 .mlflow/
+mlflow.db
+*.db
+*.sqlite
+
+# DVC Cache & Local Remote Storage
+.dvc/cache/
+.dvc/tmp/
+dvc_remote_storage/
 
 # DVC - Data and models are versioned with DVC, not Git
 /data/raw/*.csv

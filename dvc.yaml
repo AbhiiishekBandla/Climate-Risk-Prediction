@@ -1,0 +1,61 @@
+# DVC Reproducible MLOps Pipeline Definition
+stages:
+  data_validation:
+    cmd: python src/data/validate_data.py
+    deps:
+      - data/raw/climate_risk_data.csv
+      - src/data/validate_data.py
+    outs:
+      - data/raw/validation_status.json
+
+  feature_engineering:
+    cmd: python src/features/build_features.py
+    deps:
+      - data/raw/climate_risk_data.csv
+      - src/features/build_features.py
+      - config/config.yaml
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - data/reference/reference_data.csv
+      - data/current/current_data.csv
+
+  eda:
+    cmd: python src/features/eda.py
+    deps:
+      - data/processed/train.csv
+      - src/features/eda.py
+    outs:
+      - reports/figures
+      - reports/eda_statistics.csv
+      - reports/eda_summary.json
+
+  model_training_and_evaluation:
+    cmd: python src/models/train.py
+    deps:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - src/models/train.py
+      - config/params.yaml
+    params:
+      - config/params.yaml:
+          - models.gradient_boosting
+          - models.random_forest
+    outs:
+      - models/best_model.joblib
+      - models/preprocessor.joblib
+    metrics:
+      - metrics/scores.json:
+          cache: false
+      - metrics/model_comparison.csv:
+          cache: false
+    plots:
+      - metrics/confusion_matrix.png:
+          cache: false
+
+  mlflow_tracking:
+    cmd: python src/pipelines/mlflow_tracker.py
+    deps:
+      - models/best_model.joblib
+      - metrics/scores.json
+      - src/pipelines/mlflow_tracker.py

@@ -1,0 +1,28 @@
+{
+  "validation_passed": true,
+  "total_records": 13148,
+  "total_columns": 19,
+  "cities": [
+    "Chennai",
+    "Kolkata",
+    "Mumbai",
+    "New Delhi"
+  ],
+  "date_range": [
+    "2015-01-01",
+    "2023-12-31"
+  ],
+  "columns_verified": [
+    "time",
+    "city",
+    "temperature_2m_max",
+    "temperature_2m_min",
+    "temperature_2m_mean",
+    "apparent_temperature_max",
+    "precipitation_sum",
+    "windspeed_10m_max",
+    "windgusts_10m_max",
+    "surface_pressure_mean",
+    "relative_humidity_2m_mean"
+  ]
+}
