@@ -320,3 +320,33 @@ pytest tests/ -v
   - [x] Streamlit headless server tested locally (HTTP 200 response verified)
   - [x] UI verification screenshot captured (`reports/app_dashboard_screenshot.png`)
   - [x] 32 automated unit and integration tests passing (`tests/test_app.py`)
+## Testing and Validation
+
+The Climate Risk Prediction System was validated using automated unit and integration tests.
+
+### Latest Test Results
+
+| Metric | Result |
+|---|---|
+| Tests Passed | 33 |
+| Tests Failed | 0 |
+| Warnings | 16 |
+| Execution Time | 125.96 seconds |
+| Python Version | 3.11.9 |
+
+**Test Status: All 33 tests passed successfully.**
+
+Testing command:
+
+```bash
+pytest -v
+```
+
+### Testing Coverage
+
+- Application testing
+- Data pipeline testing
+- Model pipeline testing
+- MLOps integration testing
+- Monitoring testing
+- Setup validation
