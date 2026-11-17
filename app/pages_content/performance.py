@@ -77,18 +77,33 @@ def render_performance_page():
     )
     
     if not comp_df.empty:
+        rename_map = {
+            "model_name": "Model",
+            "accuracy": "Accuracy",
+            "precision_macro": "Precision (Macro)",
+            "recall_macro": "Recall (Macro)",
+            "f1_macro": "F1 (Macro)",
+            "f1_weighted": "F1 (Weighted)",
+            "roc_auc_macro_ovr": "ROC-AUC (Macro OvR)"
+        }
+        display_df = comp_df.rename(columns=rename_map)
+        if "Model" not in display_df.columns and "model_name" in comp_df.columns:
+            display_df["Model"] = comp_df["model_name"]
+            
+        highlight_cols = [c for c in ["Accuracy", "Precision (Macro)", "Recall (Macro)", "F1 (Macro)", "ROC-AUC (Macro OvR)"] if c in display_df.columns]
+        
         c1, c2 = st.columns([1.2, 1])
         with c1:
             st.dataframe(
-                comp_df.style.highlight_max(subset=["Accuracy", "Precision (Macro)", "Recall (Macro)", "F1 (Macro)", "ROC-AUC (Macro OvR)"], color="#DCFCE7"),
+                display_df.style.highlight_max(subset=highlight_cols, color="#DCFCE7") if highlight_cols else display_df,
                 use_container_width=True
             )
         with c2:
             fig_comp = px.bar(
-                comp_df,
-                x="Model",
-                y="F1 (Macro)",
-                color="Model",
+                display_df,
+                x="Model" if "Model" in display_df.columns else display_df.columns[0],
+                y="F1 (Macro)" if "F1 (Macro)" in display_df.columns else display_df.columns[1],
+                color="Model" if "Model" in display_df.columns else display_df.columns[0],
                 title="Model Comparison by F1-Score (Macro)",
                 text_auto=".4f"
             )

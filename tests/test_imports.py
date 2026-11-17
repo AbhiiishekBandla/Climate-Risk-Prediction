@@ -8,6 +8,9 @@ def test_imports():
     import numpy as np
     print(f"✓ numpy: {np.__version__}")
 
+    import pyarrow as pa
+    print(f"✓ pyarrow: {pa.__version__}")
+
     import pandas as pd
     print(f"✓ pandas: {pd.__version__}")
 

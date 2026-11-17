@@ -147,3 +147,25 @@ def test_evidently_html_reports_exist_for_app():
     for r in reports:
         assert os.path.exists(r), f"Evidently report {r} missing"
         assert os.path.getsize(r) > 100_000, f"Report {r} too small"
+
+def test_all_pages_render_without_exception():
+    from pathlib import Path
+    from streamlit.testing.v1 import AppTest
+    pages = [
+        "🏠 Home / Overview",
+        "🔮 Climate Risk Prediction",
+        "📈 Data Visualization & EDA",
+        "📡 Data Drift Monitoring",
+        "🎯 Target Drift Monitoring",
+        "🧠 SHAP Explainability",
+        "📊 Model Performance & Alerts",
+        "ℹ️ Project Information"
+    ]
+    app_path = Path(__file__).resolve().parent.parent / "app" / "app.py"
+    at = AppTest.from_file(str(app_path), default_timeout=30)
+    at.run()
+    assert not at.exception
+    for page in pages:
+        at.sidebar.radio[0].set_value(page)
+        at.run()
+        assert not at.exception, f"Exception rendering {page}: {at.exception}"
