@@ -13,7 +13,22 @@ Climate-Risk-Prediction/
 ├── .github/
 │   └── workflows/
 │       └── ci.yaml               # GitHub Actions CI workflow
+├── .streamlit/                   # Streamlit server and theme configuration
+│   └── config.toml
 ├── .venv/                        # Dedicated Python 3.11 virtual environment
+├── app/                          # Production Streamlit application
+│   ├── app.py                    # Multi-page dashboard entrypoint & navigation
+│   ├── components/               # Styling, data loaders & report embedders
+│   │   └── utils.py
+│   └── pages_content/            # Modular page view renderers
+│       ├── home.py               # Page 1: Home / Project Overview
+│       ├── prediction.py         # Page 2: Climate Risk Prediction (Single & Batch)
+│       ├── visualization.py      # Page 3: Climate Data Visual Analytics & EDA
+│       ├── data_drift.py         # Page 4: Evidently AI Data Drift Monitoring
+│       ├── target_drift.py       # Page 5: Target vs Prediction Drift Monitoring
+│       ├── explainability.py     # Page 6: SHAP Global & Local Interpretability
+│       ├── performance.py        # Page 7: Model Performance Monitoring & Health
+│       └── project_info.py       # Page 8: Project Information & Provenance
 ├── config/
 │   ├── config.yaml               # Central paths, features & drift thresholds
 │   └── params.yaml               # Model hyperparameters & training configs
@@ -39,12 +54,13 @@ Climate-Risk-Prediction/
 │   │   ├── target_drift_report.html
 │   │   ├── model_performance_report.html
 │   │   └── latest_monitoring_dashboard.json
-│   └── explainability/           # SHAP beeswarm, bar, and event plots
-│       ├── shap_summary_beeswarm.png
-│       ├── shap_feature_importance_bar.png
-│       ├── shap_local_heatwave_explanation.png
-│       ├── shap_local_flood_explanation.png
-│       └── shap_summary.json
+│   ├── explainability/           # SHAP beeswarm, bar, and event plots
+│   │   ├── shap_summary_beeswarm.png
+│   │   ├── shap_feature_importance_bar.png
+│   │   ├── shap_local_heatwave_explanation.png
+│   │   ├── shap_local_flood_explanation.png
+│   │   └── shap_summary.json
+│   └── app_dashboard_screenshot.png # High-fidelity UI verification screenshot
 ├── src/                          # Modular production source code
 │   ├── data/
 │   │   ├── load_data.py          # Data collection & provenance tracking
@@ -66,7 +82,9 @@ Climate-Risk-Prediction/
 │   └── utils/
 │       ├── common.py             # YAML reader and directory utilities
 │       └── logger.py             # Centralized application logging
-├── tests/                        # Comprehensive automated test suite (20 tests)
+├── tests/                        # Comprehensive automated test suite (32 tests)
+│   ├── test_app.py               # Streamlit application, loaders & prediction tests
+│   ├── test_monitoring.py        # Evidently AI, SHAP & performance alerts tests
 │   ├── test_data_pipeline.py     # Data ingestion & feature engineering unit tests
 │   ├── test_imports.py           # Dependency verification tests
 │   ├── test_mlops_pipeline.py    # DVC, MLflow, and DagsHub integration tests
@@ -233,17 +251,54 @@ Outputs master dashboard summary to `reports/monitoring/latest_monitoring_dashbo
 
 ---
 
+## 🚀 Streamlit Web Application & Deployment (Phase 5)
+
+An enterprise-grade, multi-page web application providing an intuitive visual interface for predictions, exploratory analytics, model explainability, and live drift monitoring.
+
+### 1. Application Architecture & Navigation
+The application (`app/app.py`) features modern responsive UI styling, KPI cards, NDMA severity color badges, and an 8-page sidebar router:
+* **🏠 Page 1: Home / Project Overview:** High-level executive summary, system KPIs (13,148 records, 99.90% F1), and MLOps lifecycle design.
+* **🔮 Page 2: Real-Time Climate Risk Prediction:**
+  * **Single Forecast Form:** Real-time meteorological inputs with live auto-computation of Heat Index, DTR, and IMD Seasons. Includes quick-load scenario presets (Severe Heatwave, Monsoon Flash Flood, Tropical Cyclone/Squall, Benign Winter Day).
+  * **Real Inference:** Pipeline loads `models/best_model.joblib`, runs feature transformations, and outputs risk badges, NDMA advisories, confidence gauges, and multi-class probability distributions.
+  * **Batch CSV Engine:** File uploader supporting high-throughput scoring with one-click sample template download and result CSV export.
+* **📈 Page 3: Climate Data Visual Analytics:** Interactive Plotly charts for temperature histograms, Heat Index contour scatterplots, rainfall boxplots, and regional risk distributions.
+* **📡 Page 4: Feature Data Drift Monitoring:** Evidently AI status cards, feature stability tables, and embedded interactive HTML drift reports.
+* **🎯 Page 5: Target Drift vs. Prediction Drift:** Deep dive into distribution shifts ($p=0.0042$ vs $p=0.0051$) with comparative bar charts and Evidently HTML integration.
+* **🧠 Page 6: SHAP Model Explainability:** Interactive global importance rankings, actual beeswarm plots, and localized scenario attribution case studies.
+* **📊 Page 7: Model Performance Monitoring & Health:** 5-model candidate benchmarks, baseline vs. current performance deltas, confusion matrix, and automated degradation alert monitors.
+* **ℹ️ Page 8: Project Information & Provenance:** Full documentation on Open-Meteo ERA5 origin, NDMA/IMD proxy labeling criteria, and the complete MLOps stack.
+
+### 2. Local Execution Instructions
+```bash
+# 1. Activate dedicated virtual environment
+.\.venv\Scripts\Activate.ps1
+
+# 2. Launch the Streamlit application
+streamlit run app/app.py
+```
+Open [http://localhost:8501](http://localhost:8501) in your browser to interact with the platform.
+
+### 3. Cloud Deployment Preparation (Streamlit Community Cloud)
+The repository is fully configured for deployment on **Streamlit Community Cloud** or containerized environments:
+* **Configuration:** `.streamlit/config.toml` configures server port (`8501`), headless execution (`true`), custom theme colors, and security constraints.
+* **Dependencies:** Clean, pinned specifications in `requirements.txt` including `streamlit`, `scikit-learn`, `xgboost`, `shap`, `evidently`, and `plotly`.
+* **Zero Secret Exposure:** Model inference and monitoring run completely standalone without requiring live API keys or cloud tokens.
+
+---
+
 ## 🧪 Automated Test Suite
 
-25 automated unit and integration tests passing:
+32 automated unit and integration tests passing:
 ```bash
 pytest tests/ -v
 ```
-* `test_monitoring.py`: Validates data drift HTML/JSON, target vs prediction drift distinction, performance metrics/alert engine, and SHAP explainability artifacts.
-* `test_mlops_pipeline.py`: Validates DVC lockfiles, pipeline stages, schema validation reports, and MLflow run logs.
-* `test_data_pipeline.py`: Validates raw dataset schema, temporal boundaries, heat index, and IMD seasons.
-* `test_model_pipeline.py`: Validates model benchmark tables, confusion matrices, single and batch inference.
-* `test_setup.py` & `test_imports.py`: Validates environment, configs, and library versions.
+* `test_app.py` (7 tests): Validates Streamlit file structure, model pipeline loading, data loaders, scenario presets, single prediction flow, batch inference, and Evidently report embedding.
+* `test_monitoring.py` (5 tests): Validates data drift HTML/JSON, target vs prediction drift distinction, performance metrics/alert engine, and SHAP explainability artifacts.
+* `test_mlops_pipeline.py` (5 tests): Validates DVC lockfiles, pipeline stages, schema validation reports, and MLflow run logs.
+* `test_data_pipeline.py` (5 tests): Validates raw dataset schema, temporal boundaries, heat index, and IMD seasons.
+* `test_model_pipeline.py` (5 tests): Validates model benchmark tables, confusion matrices, single and batch inference.
+* `test_setup.py` & `test_imports.py` (5 tests): Validates environment, configs, and library versions.
 
 ---
 
@@ -253,13 +308,15 @@ pytest tests/ -v
 - [x] **Phase 2: Data Science**
 - [x] **Phase 3: MLOps Pipeline Integration**
 - [x] **Phase 4: Monitoring & Explainability**
-  - [x] Evidently AI feature data drift detection report & alerts
-  - [x] Target drift vs. prediction distribution drift separation
-  - [x] SHAP multi-class global and local feature importance
-  - [x] Production performance monitoring & degradation alerts
-  - [x] Unified monitoring pipeline orchestrator & historical archiving
-  - [x] 25 unit/integration tests passing
-- [ ] **Phase 5: Deployment & Dashboard**
-  - Streamlit climate risk prediction web application
-  - Real-time batch and single-instance prediction interface
-  - Drift & performance metrics visualizer
+- [x] **Phase 5: Deployment & Dashboard**
+  - [x] Professional 8-page Streamlit web application (`app/app.py`)
+  - [x] Real-time single-instance prediction with live meteorological indicator derivation
+  - [x] 4 realistic weather scenario presets (Heatwave, Flood, Cyclone, Benign)
+  * [x] High-throughput batch CSV upload, evaluation & export
+  - [x] Interactive Plotly visual analytics & hazard distribution explorer
+  - [x] Embedded Evidently AI data drift, target drift & performance HTML reports
+  - [x] Interactive SHAP global and local case study explanations
+  - [x] Automated model degradation alert checks & system health status
+  - [x] Streamlit headless server tested locally (HTTP 200 response verified)
+  - [x] UI verification screenshot captured (`reports/app_dashboard_screenshot.png`)
+  - [x] 32 automated unit and integration tests passing (`tests/test_app.py`)
